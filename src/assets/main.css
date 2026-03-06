@@ -1,0 +1,107 @@
+/* Base Layout matching Canva Style */
+:root {
+  --primary-bg: #000000;
+  --secondary-bg: #111111;
+  --text-primary: #ffffff;
+  --text-secondary: #cccccc;
+  --font-family: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
+  --radius-large: 40px;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-family);
+  background-color: var(--primary-bg);
+  color: var(--text-primary);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  line-height: 1.6;
+}
+
+#app {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0;
+}
+
+/* Reset Links */
+a {
+  text-decoration: none;
+  color: inherit;
+  transition: color 0.3s ease;
+}
+
+a:hover {
+  color: var(--text-secondary);
+}
+
+/* Global utility classes */
+.text-uppercase {
+  text-transform: uppercase;
+}
+
+.text-bold {
+  font-weight: bold;
+}
+
+.img-rounded {
+  border-radius: var(--radius-large);
+  object-fit: cover;
+  transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.img-rounded:hover {
+  transform: scale(1.03);
+  /* Subtle premium hover effect */
+}
+
+/* -----------------------------------------
+   ANIMATIONS & TRANSITIONS (Scroll Reveals)
+   ----------------------------------------- */
+
+/* Base class for elements that will be animated */
+.reveal-hidden {
+  opacity: 0;
+  transform: translateY(40px);
+  transition: all 1s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.reveal-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Stagger delays for children elements if needed */
+.delay-100 {
+  transition-delay: 100ms;
+}
+
+.delay-200 {
+  transition-delay: 200ms;
+}
+
+.delay-300 {
+  transition-delay: 300ms;
+}
+
+.delay-400 {
+  transition-delay: 400ms;
+}
+
+/* Image scaling reveal */
+.reveal-scale-hidden {
+  opacity: 0;
+  transform: scale(0.95);
+  transition: all 1.2s cubic-bezier(0.165, 0.84, 0.44, 1);
+}
+
+.reveal-scale-visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+@media (max-width: 768px) {
+  #app {
+    padding: 0;
+  }
+}
