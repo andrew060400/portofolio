@@ -52,7 +52,7 @@
     <div v-else-if="error" class="error-overlay">
       <div class="fc-container text-center">
         <h2 class="fc-section-title text-white">{{ t.error_title }}</h2>
-        <p class="fc-body-text text-white">{{ ت.error_desc }}</p>
+        <p class="fc-body-text text-white">{{ t.error_desc }}</p>
         <button @click="fetchVerse" class="fc-btn-red mt-4">{{ t.try_again }}</button>
       </div>
     </div>
