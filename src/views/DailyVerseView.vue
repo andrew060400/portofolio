@@ -3,12 +3,26 @@
     <!-- NAVIGATION -->
     <nav :class="['fc-navbar', { 'is-scrolled': isScrolled }]">
       <div class="fc-nav-container">
-        <!-- Logo -->
-        <div class="fc-logo" @click="$router.push('/')">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-            <path d="M12 2L2 22H22L12 2Z" />
-          </svg>
-          <span>DAILY MANNA</span>
+        <!-- Logo Acting As Language Selector -->
+        <div class="fc-logo-wrapper">
+            <div class="fc-logo" @click="showLangMenu = !showLangMenu">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2L2 22H22L12 2Z"></path>
+              </svg>
+              <span>DAILY MANNA</span>
+              
+              <!-- Indicator of Language Mode -->
+              <span style="font-size: 0.6rem; margin-left: 0.5rem; opacity: 0.6;">[{{ currentLang.toUpperCase() }}]</span>
+            </div>
+            
+            <!-- Absolute Positioning Dropdown menu -->
+            <div v-if="showLangMenu" class="fc-logo-lang-dropdown">
+               <div class="lang-option" @click="selectLang('en')">English (EN)</div>
+               <div class="lang-option" @click="selectLang('id')">Bahasa (ID)</div>
+               <div class="lang-option" @click="selectLang('zh')">中文 (ZH)</div>
+            </div>
+            <!-- Overlay to close menu when clicking outside -->
+            <div v-if="showLangMenu" class="lang-overlay" @click="showLangMenu = false"></div>
         </div>
         
         <!-- Desktop Nav Center -->
@@ -17,20 +31,13 @@
           <a href="#" @click.prevent="scrollToReflection">{{ t.devotionals }}</a>
           <a href="#">{{ t.ministries }}</a>
           <a href="#">{{ t.watch }}</a>
-          
-          <!-- Language Selector -->
-          <div class="lang-selector">
-            <select v-model="currentLang" @change="changeLanguage" class="lang-dropdown">
-              <option value="en">EN</option>
-              <option value="id">ID</option>
-              <option value="zh">ZH</option>
-            </select>
-          </div>
         </div>
 
-        <!-- Right Action -->
-        <div class="fc-nav-right">
-          <button class="fc-btn-red" @click="$router.push('/andrew')">{{ t.portfolio }}</button>
+        <!-- Right Action (Always visible on mobile: Portfolio Button) -->
+        <div class="fc-nav-right-container">
+          <div class="fc-nav-right desktop-only">
+            <button class="fc-btn-red" @click="$router.push('/andrew')">{{ t.portfolio }}</button>
+          </div>
         </div>
       </div>
     </nav>
@@ -193,6 +200,7 @@ const verseData = ref(null)
 const reflectionRef = ref(null)
 const isScrolled = ref(false)
 const isSpeaking = ref(false)
+const showLangMenu = ref(false)
 const currentLang = ref(localStorage.getItem('fc_lang') || 'en')
 
 // UI Dictionary
@@ -296,6 +304,12 @@ const currentDateFormatted = computed(() => {
   const localeMap = { 'en': 'en-US', 'id': 'id-ID', 'zh': 'zh-CN' }
   return new Date().toLocaleDateString(localeMap[currentLang.value], options)
 })
+
+const selectLang = (lang) => {
+    currentLang.value = lang
+    showLangMenu.value = false
+    changeLanguage()
+}
 
 const changeLanguage = () => {
     localStorage.setItem('fc_lang', currentLang.value)
@@ -535,15 +549,36 @@ onUnmounted(() => {
 
 .fc-nav-center a:hover { color: #E52B1E; }
 
-/* Language Dropdown */
-.lang-selector { margin-left: 1rem; }
-.lang-dropdown {
-  background: transparent; color: #111111;
-  border: 1px solid #cccccc; border-radius: 4px;
-  padding: 0.3rem 0.5rem; font-family: inherit; font-weight: 700; font-size: 0.8rem;
-  cursor: pointer; transition: all 0.2s ease;
+.fc-nav-right-container {
+  display: flex; align-items: center; gap: 1.5rem;
 }
-.lang-dropdown:focus { outline: none; border-color: #E52B1E; }
+
+/* Custom Logo-based Language Dropdown */
+.fc-logo-wrapper {
+  position: relative; 
+  z-index: 2000;
+}
+
+.fc-logo-lang-dropdown {
+  position: absolute; top: calc(100% + 15px); left: 0;
+  background-color: #ffffff; color: #111111;
+  border-radius: 8px; box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+  display: flex; flex-direction: column; overflow: hidden;
+  min-width: 150px; z-index: 2001;
+}
+
+.lang-option {
+  padding: 1rem 1.5rem; font-weight: 700; font-size: 0.85rem;
+  border-bottom: 1px solid rgba(0,0,0,0.05); cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.lang-option:last-child { border-bottom: none; }
+.lang-option:hover { background-color: #fceceb; color: #E52B1E; }
+
+.lang-overlay {
+  position: fixed; inset: 0; background-color: transparent; z-index: 2000;
+}
 
 /* BUTTONS */
 .fc-btn-red {
@@ -784,8 +819,8 @@ onUnmounted(() => {
 }
 
 @media (max-width: 768px) {
-  .fc-nav-center a { display: none; }
-  .fc-nav-right { display: none; }
+  .fc-nav-center { display: none; }
+  .desktop-only { display: none; }
   .fc-grid-2, .fc-grid-3 { grid-template-columns: 1fr; gap: 2rem; }
   .fc-hero-content { padding: 2rem 1.5rem; }
   .fc-hero-title { font-size: 2.5rem; letter-spacing: -1px; }
