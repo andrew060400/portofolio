@@ -1,0 +1,1 @@
+import{_ as s,c as t,a as o,o as r}from"./index-DZVrAEzI.js";const n={},a={class:"about"};function c(u,e){return r(),t("div",a,[...e[0]||(e[0]=[o("h1",null,"About Me",-1),o("p",null,"This is the portfolio for showcasing my Vue.js projects using a neat MVC structure.",-1)])])}const l=s(n,[["render",c]]);export{l as default};
