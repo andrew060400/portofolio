@@ -134,8 +134,66 @@
         </div>
       </section>
 
+      <!-- PRAYER CORNER (POJOK DOA) CHAT SECTION -->
+      <section class="fc-section fc-gray-bg" id="prayer-corner">
+        <div class="fc-container">
+          <h2 class="fc-section-title text-center">{{ t.prayer_corner_title }}</h2>
+          <p class="fc-body-text text-center" style="max-width: 600px; margin: 0 auto 2rem;">{{ t.prayer_corner_desc }}</p>
+          <div class="fc-divider center"></div>
+          
+          <div class="chat-container mt-4">
+            <!-- Chat Messages History -->
+            <div class="chat-history" ref="chatHistoryRef">
+               <!-- Welcome message from AI -->
+               <div class="chat-message ai-message">
+                  <div class="chat-avatar">
+                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                  </div>
+                  <div class="chat-bubble">{{ t.prayer_welcome }}</div>
+               </div>
+
+               <!-- Dynamically rendered messages -->
+               <div v-for="(msg, index) in prayerHistory" :key="index" :class="['chat-message', msg.role === 'user' ? 'user-message' : 'ai-message']">
+                  <div v-if="msg.role === 'ai'" class="chat-avatar">
+                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                  </div>
+                  <!-- Content renders markdown line breaks logically -->
+                  <div class="chat-bubble" v-html="formatChatContent(msg.content)"></div>
+               </div>
+
+               <!-- Typing Indicator -->
+               <div v-if="isPrayerLoading" class="chat-message ai-message">
+                  <div class="chat-avatar">
+                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+                  </div>
+                  <div class="chat-bubble typing-indicator">
+                     <span></span><span></span><span></span>
+                  </div>
+               </div>
+               <!-- Scroll anchoring -->
+               <div ref="prayerEndRef"></div>
+            </div>
+
+            <!-- Chat Input Area -->
+            <div class="chat-input-area">
+               <textarea 
+                  v-model="prayerInput" 
+                  @keydown.enter.prevent="submitPrayerRequest"
+                  :placeholder="t.prayer_placeholder" 
+                  rows="1"
+                  class="chat-textarea"
+                  :disabled="isPrayerLoading"
+               ></textarea>
+               <button class="chat-send-btn" @click="submitPrayerRequest" :disabled="!prayerInput.trim() || isPrayerLoading">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+               </button>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <!-- ADDITIONAL CARDS SECTION (Simulating Ministries/Connect) -->
-      <section class="fc-section fc-gray-bg">
+      <section class="fc-section">
         <div class="fc-container">
            <h2 class="fc-section-title text-center">{{ t.explore_more }}</h2>
            <div class="fc-divider center"></div>
@@ -203,6 +261,13 @@ const isSpeaking = ref(false)
 const showLangMenu = ref(false)
 const currentLang = ref(localStorage.getItem('fc_lang') || 'en')
 
+// Chat / Prayer Corner State
+const prayerInput = ref('')
+const prayerHistory = ref([])
+const isPrayerLoading = ref(false)
+const chatHistoryRef = ref(null)
+const prayerEndRef = ref(null)
+
 // UI Dictionary
 const dictionary = {
   en: {
@@ -233,7 +298,12 @@ const dictionary = {
     card_3_desc: 'Experience powerful worship and uncompromised truth every Sunday.',
     watch_latest: 'WATCH LATEST',
     tts_error: 'Sorry, your browser does not support Text-to-Speech.',
-    prompt_instruction: 'You are a compassionate Christian devotional writer. Provide a daily Bible verse along with a short, meaningful reflection. VERY IMPORTANT: Your response must be entirely in ENGLISH. Return the output STRICTLY as a JSON object with keys: "reference" (the Bible verse reference, e.g., "John 3:16"), "text" (the actual verse text in English), and "reflection" (a 2-3 sentence thoughtful reflection in English).'
+    prompt_instruction: 'You are a compassionate Christian devotional writer. Provide a daily Bible verse along with a short, meaningful reflection. VERY IMPORTANT: Your response must be entirely in ENGLISH. Return the output STRICTLY as a JSON object with keys: "reference" (the Bible verse reference, e.g., "John 3:16"), "text" (the actual verse text in English), and "reflection" (a 2-3 sentence thoughtful reflection in English).',
+    prayer_corner_title: 'PRAYER CORNER',
+    prayer_corner_desc: 'Bring your burdens here. Share your struggles below, and we will pray with you and provide specific prayer points based on the word of God.',
+    prayer_welcome: 'Hello. I am here to listen and pray with you. What challenges are you facing right now that we can lift up together?',
+    prayer_placeholder: 'Share your burden here...',
+    prayer_prompt_system: `You are a deeply empathetic, loving Christian prayer counselor. A user will share their struggles or life problems with you. Provide brief, comforting words of encouragement rooted in scripture, then provide a bulleted list of 2-3 specific, actionable "Prayer Points" (pokok doa) that they can use to pray over their situation. Always respond empathetically. Do not act like an AI, but like a compassionate counselor. VERY IMPORTANT: Respond strictly in ENGLISH.`
   },
   id: {
     home: 'BERANDA',
@@ -263,7 +333,12 @@ const dictionary = {
     card_3_desc: 'Alami pujian penyembahan yang kuat dan kebenaran firman setiap hari Minggu.',
     watch_latest: 'TONTON SEKARANG',
     tts_error: 'Maaf, browser Anda tidak mendukung fitur Text-to-Speech.',
-    prompt_instruction: 'Anda adalah seorang penulis renungan Kristen yang penuh kasih. Berikan satu ayat Alkitab harian beserta renungan singkat yang bermakna. SANGAT PENTING: Seluruh respons Anda HARUS menggunakan BAHASA INDONESIA. Kembalikan output SECARA KETAT sebagai objek JSON dengan kunci: "reference" (referensi ayat, contoh: "Yohanes 3:16"), "text" (teks ayat Alkitab dalam Bahasa Indonesia), dan "reflection" (2-3 kalimat renungan yang bijak dalam Bahasa Indonesia).'
+    prompt_instruction: 'Anda adalah seorang penulis renungan Kristen yang penuh kasih. Berikan satu ayat Alkitab harian beserta renungan singkat yang bermakna. SANGAT PENTING: Seluruh respons Anda HARUS menggunakan BAHASA INDONESIA. Kembalikan output SECARA KETAT sebagai objek JSON dengan kunci: "reference" (referensi ayat, contoh: "Yohanes 3:16"), "text" (teks ayat Alkitab dalam Bahasa Indonesia), dan "reflection" (2-3 kalimat renungan yang bijak dalam Bahasa Indonesia).',
+    prayer_corner_title: 'POJOK DOA',
+    prayer_corner_desc: 'Bawa beban Anda ke sini. Bagikan pergumulan Anda di bawah ini, dan kami akan berdoa bersama Anda serta memberikan pokok-pokok doa khusus berdasarkan firman Tuhan.',
+    prayer_welcome: 'Halo. Saya di sini untuk mendengarkan dan berdoa bersama Anda. Pergumulan atau tantangan apa yang sedang Anda hadapi saat ini?',
+    prayer_placeholder: 'Bagikan pergumulan Anda di sini...',
+    prayer_prompt_system: `Anda adalah seorang konselor doa Kristen yang sangat empati dan penuh kasih. Pengguna akan membagikan pergumulan atau masalah hidup mereka. Berikan kata-kata penghiburan singkat yang menguatkan dan berakar pada Alkitab, lalu berikan daftar berformat bullet berisi 2-3 "Pokok Doa" yang spesifik yang dapat mereka gunakan untuk mendoakan situasi tersebut. Tolong jangan bertindak kaku seperti AI, melainkan seperti konselor manusia yang penyayang. SANGAT PENTING: Respons HARUS menggunakan BAHASA INDONESIA.`
   },
   zh: {
     home: '主页',
@@ -293,7 +368,12 @@ const dictionary = {
     card_3_desc: '每个星期天体验充满力量的敬拜和不妥协的真理。',
     watch_latest: '观看最新',
     tts_error: '抱歉，您的浏览器不支持文本转语音功能。',
-    prompt_instruction: '你是一位以慈爱为怀的基督教灵修作家。请提供每日圣经经文和简短、有意义的灵修内容。非常重要：您的所有回复必须全部使用中文。必须严格返回一个JSON对象作为结果，键名为："reference"（圣经经文引用，例如："约翰福音 3:16"），"text"（中文经文内容），以及"reflection"（2-3句充满哲理的中文灵修）。'
+    prompt_instruction: '你是一位以慈爱为怀的基督教灵修作家。请提供每日圣经经文和简短、有意义的灵修内容。非常重要：您的所有回复必须全部使用中文。必须严格返回一个JSON对象作为结果，键名为："reference"（圣经经文引用，例如："约翰福音 3:16"），"text"（中文经文内容），以及"reflection"（2-3句充满哲理的中文灵修）。',
+    prayer_corner_title: '祷告角',
+    prayer_corner_desc: '将你的重担交托在这里。请分享您当前面临的挣扎，我们将与您一同祷告，并根据神的话语提供具体的代祷事项。',
+    prayer_welcome: '您好。我在这里倾听并与您一同祷告。您目前正面临什么挑战或挣扎可以向我分享？',
+    prayer_placeholder: '在这里分享您的重担...',
+    prayer_prompt_system: `你是一位极具同理心、充满爱心的基督教祷告辅导员。用户将与你分享他们的挣扎或生活问题。请根据圣经提供简短、安慰和鼓励的言辞，然后提供一个包含2-3个具体且有针对性的"代祷事项"（Prayer Points）的列表，供他们在当前处境中祷告使用。请务必表现出极大的同理心，不要表现得像冰冷的AI，而是像一位富有同情心的人类辅导员。非常重要：所有的回复必须使用中文（简体）。`
   }
 }
 
@@ -311,6 +391,20 @@ const selectLang = (lang) => {
     changeLanguage()
 }
 
+const formatChatContent = (content) => {
+    if (!content) return ''
+    // Simple naive markdown parsing for bold text and line breaks
+    return content.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\n/g, '<br/>')
+}
+
+const scrollToChatBottom = () => {
+    setTimeout(() => {
+        if (prayerEndRef.value) {
+            prayerEndRef.value.scrollIntoView({ behavior: 'smooth' })
+        }
+    }, 100)
+}
+
 const changeLanguage = () => {
     localStorage.setItem('fc_lang', currentLang.value)
     // If speaking, stop it
@@ -320,6 +414,62 @@ const changeLanguage = () => {
         commandYouTube('playVideo')
     }
     fetchVerse()
+}
+
+const submitPrayerRequest = async () => {
+    if (!prayerInput.value.trim() || isPrayerLoading.value) return;
+
+    const userText = prayerInput.value.trim();
+    prayerInput.value = '';
+    
+    // Add user message to history
+    prayerHistory.value.push({ role: 'user', content: userText });
+    scrollToChatBottom();
+
+    isPrayerLoading.value = true;
+
+    try {
+        const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+        if (!apiKey || apiKey === 'YOUR_GEMINI_API_KEY_HERE') {
+            throw new Error('API Key missing');
+        }
+
+        const genAI = new GoogleGenerativeAI(apiKey);
+        
+        // Pass the previous context as chat history specifically formatted for the model
+        const model = genAI.getGenerativeModel({
+            model: 'gemini-2.5-flash',
+            systemInstruction: t.value.prayer_prompt_system,
+        });
+
+        // Initialize chat session
+        const chat = model.startChat({
+            history: prayerHistory.value.slice(0, -1).map(msg => ({
+                role: msg.role === 'ai' ? 'model' : 'user',
+                parts: [{ text: msg.content }]
+            }))
+        });
+
+        // Send the new message
+        const result = await chat.sendMessage(userText);
+        const responseText = result.response.text();
+
+        prayerHistory.value.push({
+            role: 'ai',
+            content: responseText
+        });
+
+    } catch (err) {
+        console.error('Prayer Error:', err);
+        let errorMsg = currentLang.value === 'id' ? 'Maaf, saya sedang kesulitan terhubung. Bisakah Anda mengulanginya?' :
+                       currentLang.value === 'zh' ? '抱歉，我当前无法连接网络。您能再试一次吗？' :
+                       'Sorry, I am having trouble connecting. Could you please try again?';
+        
+        prayerHistory.value.push({ role: 'ai', content: errorMsg });
+    } finally {
+        isPrayerLoading.value = false;
+        scrollToChatBottom();
+    }
 }
 
 // For hero text, extract just the first sentence so it isn't massive
@@ -806,6 +956,80 @@ onUnmounted(() => {
 .fc-footer-text {
   color: #888888; font-size: 0.9rem;
 }
+
+/* CHAT COMPONENT CSS */
+.chat-container {
+  max-width: 800px; margin: 0 auto;
+  background-color: #ffffff;
+  border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.05);
+  display: flex; flex-direction: column; overflow: hidden;
+  border: 1px solid rgba(0,0,0,0.05);
+}
+
+.chat-history {
+  padding: 2rem; height: 400px;
+  overflow-y: auto; display: flex; flex-direction: column; gap: 1.5rem;
+  background-color: #fafafa;
+}
+
+.chat-message { display: flex; align-items: flex-end; max-width: 85%; }
+
+.chat-message.ai-message { align-self: flex-start; }
+.chat-message.user-message { align-self: flex-end; flex-direction: row-reverse; }
+
+.chat-avatar {
+  width: 32px; height: 32px; border-radius: 50%;
+  background-color: #fceceb; color: #E52B1E;
+  display: flex; justify-content: center; align-items: center; flex-shrink: 0;
+}
+.chat-message.ai-message .chat-avatar { margin-right: 12px; }
+.chat-message.user-message .chat-avatar { margin-left: 12px; background-color: #f0f0f0; color: #666; display: none; }
+
+.chat-bubble {
+  padding: 1rem 1.25rem; border-radius: 16px; font-size: 0.95rem; line-height: 1.6;
+}
+
+.ai-message .chat-bubble {
+  background-color: #ffffff; color: #333333;
+  border-bottom-left-radius: 4px; border: 1px solid #eeeeee;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+}
+
+.user-message .chat-bubble {
+  background-color: #E52B1E; color: #ffffff;
+  border-bottom-right-radius: 4px; box-shadow: 0 4px 15px rgba(229, 43, 30, 0.2);
+}
+
+.chat-input-area {
+  display: flex; align-items: flex-end; padding: 1.5rem;
+  background-color: #ffffff; border-top: 1px solid #eeeeee; gap: 1rem;
+}
+
+.chat-textarea {
+  flex-grow: 1; border: 1px solid #e0e0e0; border-radius: 20px;
+  padding: 0.8rem 1.5rem; font-family: inherit; font-size: 0.95rem;
+  resize: none; background-color: #f9f9f9; transition: border-color 0.3s;
+  min-height: 50px; line-height: 1.5; color: #111;
+}
+.chat-textarea:focus { outline: none; border-color: #E52B1E; background-color: #ffffff; }
+
+.chat-send-btn {
+  background-color: #E52B1E; color: white; border: none;
+  width: 50px; height: 50px; border-radius: 50%; display: flex;
+  justify-content: center; align-items: center; cursor: pointer;
+  flex-shrink: 0; transition: transform 0.2s, opacity 0.3s;
+}
+.chat-send-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(229, 43, 30, 0.3); }
+.chat-send-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+/* Typing indicator dots */
+.typing-indicator span {
+  display: inline-block; width: 6px; height: 6px; background-color: #bbbbbb;
+  border-radius: 50%; margin: 0 2px; animation: bounce 1.4s infinite ease-in-out both;
+}
+.typing-indicator span:nth-child(1) { animation-delay: -0.32s; }
+.typing-indicator span:nth-child(2) { animation-delay: -0.16s; }
+@keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
 
 /* ANIMATIONS */
 .reveal-fade { animation: fadeUp 1s ease-out forwards; }
