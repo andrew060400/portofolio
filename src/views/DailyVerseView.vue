@@ -232,6 +232,25 @@
            </div>
         </div>
       </section>
+
+      <!-- BIBLE STORIES SECTION -->
+      <section class="fc-section fc-gray-bg" id="bible-stories">
+         <div class="fc-container text-center">
+            <h2 class="fc-section-title">{{ t.bible_stories_title }}</h2>
+            <p class="fc-body-text" style="max-width: 600px; margin: 0 auto 2rem;">{{ t.bible_stories_desc }}</p>
+            <div class="fc-divider center"></div>
+            
+            <div class="iframe-container">
+               <iframe 
+                  :src="`https://tube.booksgiant.com/public-book/YPRrGJna9h6RTYywz/${currentLang}`" 
+                  title="Bible Stories" 
+                  width="100%" 
+                  height="700"  
+                  style="border: none; overflow-x: hidden; border-radius: 12px; box-shadow: 0 10px 40px rgba(0,0,0,0.08);" 
+               ></iframe>
+            </div>
+         </div>
+      </section>
       
       <!-- FOOTER -->
       <footer class="fc-footer">
@@ -303,7 +322,9 @@ const dictionary = {
     prayer_corner_desc: 'Bring your burdens here. Share your struggles below, and we will pray with you and provide specific prayer points based on the word of God.',
     prayer_welcome: 'Hello. I am here to listen and pray with you. What challenges are you facing right now that we can lift up together?',
     prayer_placeholder: 'Share your burden here...',
-    prayer_prompt_system: `You are a deeply empathetic, loving Christian prayer counselor. A user will share their struggles or life problems with you. Provide brief, comforting words of encouragement rooted in scripture, then provide a bulleted list of 2-3 specific, actionable "Prayer Points" (pokok doa) that they can use to pray over their situation. Always respond empathetically. Do not act like an AI, but like a compassionate counselor. VERY IMPORTANT: Respond strictly in ENGLISH.`
+    prayer_prompt_system: `You are a deeply empathetic, loving Christian prayer counselor. A user will share their struggles or life problems with you. Provide brief, comforting words of encouragement rooted in scripture, then provide a bulleted list of 2-3 specific, actionable "Prayer Points" (pokok doa) that they can use to pray over their situation. Always respond empathetically. Do not act like an AI, but like a compassionate counselor. VERY IMPORTANT: Respond strictly in ENGLISH.`,
+    bible_stories_title: 'BIBLE STORIES',
+    bible_stories_desc: 'Journey through the scriptures with our interactive bible stories.'
   },
   id: {
     home: 'BERANDA',
@@ -338,7 +359,9 @@ const dictionary = {
     prayer_corner_desc: 'Bawa beban Anda ke sini. Bagikan pergumulan Anda di bawah ini, dan kami akan berdoa bersama Anda serta memberikan pokok-pokok doa khusus berdasarkan firman Tuhan.',
     prayer_welcome: 'Halo. Saya di sini untuk mendengarkan dan berdoa bersama Anda. Pergumulan atau tantangan apa yang sedang Anda hadapi saat ini?',
     prayer_placeholder: 'Bagikan pergumulan Anda di sini...',
-    prayer_prompt_system: `Anda adalah seorang konselor doa Kristen yang sangat empati dan penuh kasih. Pengguna akan membagikan pergumulan atau masalah hidup mereka. Berikan kata-kata penghiburan singkat yang menguatkan dan berakar pada Alkitab, lalu berikan daftar berformat bullet berisi 2-3 "Pokok Doa" yang spesifik yang dapat mereka gunakan untuk mendoakan situasi tersebut. Tolong jangan bertindak kaku seperti AI, melainkan seperti konselor manusia yang penyayang. SANGAT PENTING: Respons HARUS menggunakan BAHASA INDONESIA.`
+    prayer_prompt_system: `Anda adalah seorang konselor doa Kristen yang sangat empati dan penuh kasih. Pengguna akan membagikan pergumulan atau masalah hidup mereka. Berikan kata-kata penghiburan singkat yang menguatkan dan berakar pada Alkitab, lalu berikan daftar berformat bullet berisi 2-3 "Pokok Doa" yang spesifik yang dapat mereka gunakan untuk mendoakan situasi tersebut. Tolong jangan bertindak kaku seperti AI, melainkan seperti konselor manusia yang penyayang. SANGAT PENTING: Respons HARUS menggunakan BAHASA INDONESIA.`,
+    bible_stories_title: 'KISAH ALKITAB',
+    bible_stories_desc: 'Perjalanan menyusuri ayat-ayat dengan buku cerita Alkitab interaktif kami.'
   },
   zh: {
     home: '主页',
@@ -373,7 +396,9 @@ const dictionary = {
     prayer_corner_desc: '将你的重担交托在这里。请分享您当前面临的挣扎，我们将与您一同祷告，并根据神的话语提供具体的代祷事项。',
     prayer_welcome: '您好。我在这里倾听并与您一同祷告。您目前正面临什么挑战或挣扎可以向我分享？',
     prayer_placeholder: '在这里分享您的重担...',
-    prayer_prompt_system: `你是一位极具同理心、充满爱心的基督教祷告辅导员。用户将与你分享他们的挣扎或生活问题。请根据圣经提供简短、安慰和鼓励的言辞，然后提供一个包含2-3个具体且有针对性的"代祷事项"（Prayer Points）的列表，供他们在当前处境中祷告使用。请务必表现出极大的同理心，不要表现得像冰冷的AI，而是像一位富有同情心的人类辅导员。非常重要：所有的回复必须使用中文（简体）。`
+    prayer_prompt_system: `你是一位极具同理心、充满爱心的基督教祷告辅导员。用户将与你分享他们的挣扎或生活问题。请根据圣经提供简短、安慰和鼓励的言辞，然后提供一个包含2-3个具体且有针对性的"代祷事项"（Prayer Points）的列表，供他们在当前处境中祷告使用。请务必表现出极大的同理心，不要表现得像冰冷的AI，而是像一位富有同情心的人类辅导员。非常重要：所有的回复必须使用中文（简体）。`,
+    bible_stories_title: '圣经故事',
+    bible_stories_desc: '通过我们的互动圣经故事漫步在经文中。'
   }
 }
 
