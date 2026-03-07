@@ -570,10 +570,10 @@ const fetchVerse = async (forceRefresh = false) => {
       return
     }
 
+    const today = new Date().toLocaleDateString()
+    const langCode = currentLang.value
+
     try {
-        const today = new Date().toLocaleDateString()
-        const langCode = currentLang.value
-        
         // Cache Check (Multi-Language aware)
         if (!forceRefresh && store.dailyVerses && store.dailyVerses[langCode] && store.dailyVerses[langCode].date === today && store.dailyVerses[langCode].data) {
             verseData.value = store.dailyVerses[langCode].data
