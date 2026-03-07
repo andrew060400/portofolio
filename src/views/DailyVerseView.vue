@@ -616,8 +616,36 @@ const fetchVerse = async (forceRefresh = false) => {
         store.setDailyVerse(langCode, today, verseData.value)
 
     } catch (err) {
-        console.error('Error fetching verse from Gemini:', err)
-        error.value = true
+        console.error('Gemini Fetch Error:', err)
+        
+        try {
+            // Fallback to bible-api.com
+            const apiLangMap = { 'en': 'web', 'id': 'web', 'zh': 'cuv' } // ID uses 'web' (EN) since no Indonesian translation is available on the API
+            const translationId = apiLangMap[langCode] || 'web'
+            
+            const response = await fetch(`https://bible-api.com/data/${translationId}/random`)
+            if (!response.ok) throw new Error('Bible-API failed')
+            
+            const fallbackData = await response.json()
+            const v = fallbackData.random_verse
+            
+            const defaultReflection = 
+               langCode === 'id' ? 'Biarlah ayat harian ini menjadi perenungan dan kekuatan bagi Anda.' :
+               langCode === 'zh' ? '愿这节每日经文成为你的默想和力量。' :
+               'May this daily verse be a source of meditation and strength for you.'
+            
+            verseData.value = {
+                reference: `${v.book} ${v.chapter}:${v.verse}`,
+                text: v.text.trim(),
+                reflection: defaultReflection
+            }
+            store.setDailyVerse(langCode, today, verseData.value)
+            error.value = false
+            
+        } catch (fallbackErr) {
+            console.error('Fallback API Error:', fallbackErr)
+            error.value = true
+        }
     } finally {
         isLoading.value = false
     }
@@ -814,8 +842,8 @@ onUnmounted(() => {
 }
 
 .fc-hero-content {
-  position: relative; z-index: 10; max-width: 1000px; padding: 3rem 4rem;
-  display: flex; flex-direction: column; align-items: center;
+  position: relative; z-index: 10; max-width: 1000px; padding: 3rem 4rem; width: 100%;
+  display: flex; flex-direction: column; align-items: center; box-sizing: border-box;
   background: rgba(0, 0, 0, 0.4); /* Dark semi-transparent highlight */
   backdrop-filter: blur(12px); /* Glassmorphism effect */
   -webkit-backdrop-filter: blur(12px);
@@ -856,7 +884,7 @@ onUnmounted(() => {
   background: #ffffff; box-shadow: 0 10px 30px rgba(0,0,0,0.05);
   border-radius: 8px; padding: 2rem 3rem; width: 100%; max-width: 1200px;
   display: flex; justify-content: space-between; align-items: center;
-  flex-wrap: wrap; gap: 1rem;
+  flex-wrap: wrap; gap: 1rem; box-sizing: border-box;
   border: 1px solid rgba(0,0,0,0.05);
 }
 
@@ -877,7 +905,7 @@ onUnmounted(() => {
 .fc-gray-bg { background-color: #f9f9f9; }
 
 .fc-container {
-  max-width: 1200px; margin: 0 auto; padding: 0 2rem; width: 100%;
+  max-width: 1200px; margin: 0 auto; padding: 0 2rem; width: 100%; box-sizing: border-box;
 }
 
 .fc-section-title {
@@ -959,7 +987,7 @@ onUnmounted(() => {
 
 /* CHAT COMPONENT CSS */
 .chat-container {
-  max-width: 800px; margin: 0 auto;
+  max-width: 800px; margin: 0 auto; width: 100%; box-sizing: border-box;
   background-color: #ffffff;
   border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.05);
   display: flex; flex-direction: column; overflow: hidden;
@@ -1053,5 +1081,22 @@ onUnmounted(() => {
   .fc-section-title { font-size: 2rem; }
   .fc-hero-actions { flex-direction: column; width: 100%; }
   .fc-hero-actions button { width: 100%; }
+}
+
+@media (max-width: 480px) {
+  .fc-container { padding: 0 1rem; }
+  .fc-hero-title { font-size: 2rem; }
+  .fc-hero-subtitle { font-size: 1.15rem; }
+  .fc-hero-content { padding: 1.5rem 1rem; }
+  .fc-section-title { font-size: 1.75rem; word-break: break-word; }
+  .fc-banner { padding: 1.5rem 1rem; }
+  .fc-card-body { padding: 1.5rem 1rem; }
+  
+  .chat-history { padding: 1rem; height: 350px; }
+  .chat-input-area { padding: 1rem; gap: 0.5rem; }
+  .chat-textarea { padding: 0.6rem 1rem; }
+  
+  .fc-grid-2 { gap: 2rem; }
+  .fc-verse-quote { padding-left: 1rem; font-size: 1.15rem; }
 }
 </style>
