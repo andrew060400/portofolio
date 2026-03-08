@@ -6,9 +6,7 @@
         <!-- Logo Acting As Language Selector -->
         <div class="fc-logo-wrapper">
           <div class="fc-logo" @click="showLangMenu = !showLangMenu">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-              <path d="M12 2L2 22H22L12 2Z"></path>
-            </svg>
+            <img src="/daily-manna.jpeg" alt="Logo" class="fc-logo-img" />
             <span>DAILY MANNA</span>
 
             <!-- Indicator of Language Mode -->
@@ -808,9 +806,13 @@
     transition: color 0.3s ease;
   }
 
-  .fc-logo svg {
-    fill: #E52B1E;
-    transition: fill 0.3s ease;
+  .fc-logo-img {
+    width: 26px;
+    height: 26px;
+    border-radius: 50%;
+    object-fit: cover;
+    transition: transform 0.3s ease, border-color 0.3s ease;
+    border: 1px solid rgba(0, 0, 0, 0.1);
   }
 
   .fc-nav-center {
