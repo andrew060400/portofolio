@@ -257,6 +257,7 @@
           <div class="fc-divider center"></div>
 
           <div class="story-card-container">
+            <!-- Card 1: David & Saul -->
             <a href="https://gemini.google.com/share/79bb2850d60e" target="_blank" class="premium-story-card">
               <div class="premium-story-img">
                 <img src="/daud-saul.png" alt="Kisah Raja Daud" />
@@ -278,7 +279,65 @@
                 </div>
               </div>
             </a>
+
+            <!-- Card 2: Jesus and the Children — click to open modal -->
+            <div class="premium-story-card video-story-card" @click="openVideoModal">
+              <div class="video-thumbnail-wrapper">
+                <!-- YouTube thumbnail image -->
+                <img
+                  src="https://img.youtube.com/vi/tYETL2_b1Y0/maxresdefault.jpg"
+                  alt="Jesus Loves the Little Children thumbnail"
+                  class="video-thumbnail-img"
+                />
+                <!-- Play button overlay -->
+                <div class="video-thumb-overlay">
+                  <div class="play-icon-pulse">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M8 5V19L19 12L8 5Z" />
+                    </svg>
+                  </div>
+                </div>
+                <div class="story-badge video-badge">{{ t.story2_badge }}</div>
+              </div>
+              <div class="premium-story-content">
+                <h3 class="story-title">{{ t.story2_title }}</h3>
+                <p class="story-desc">{{ t.story2_desc }}</p>
+                <div class="story-footer">
+                  <span class="story-action">{{ t.story2_watch }}</span>
+                  <span class="story-arrow">&#9654;</span>
+                </div>
+              </div>
+            </div>
           </div>
+
+          <!-- VIDEO MODAL OVERLAY -->
+          <Teleport to="body">
+            <div v-if="videoModalOpen" class="video-modal-backdrop" @click.self="closeVideoModal">
+              <div class="video-modal-box">
+                <!-- Close button -->
+                <button class="video-modal-close" @click="closeVideoModal" aria-label="Close">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+                    <line x1="18" y1="6" x2="6" y2="18"/>
+                    <line x1="6" y1="6" x2="18" y2="18"/>
+                  </svg>
+                </button>
+                <!-- Title bar -->
+                <p class="video-modal-title">{{ t.story2_title }}</p>
+                <!-- 16:9 iframe -->
+                <div class="video-modal-embed">
+                  <iframe
+                    v-if="videoModalOpen"
+                    src="https://www.youtube.com/embed/tYETL2_b1Y0?autoplay=1&rel=0&modestbranding=1"
+                    title="Jesus Loves the Little Children | Kids Bible Story Animation"
+                    frameborder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    referrerpolicy="strict-origin-when-cross-origin"
+                    allowfullscreen
+                  ></iframe>
+                </div>
+              </div>
+            </div>
+          </Teleport>
         </div>
       </section>
 
@@ -306,6 +365,7 @@
   const error = ref(false)
   const verseData = ref(null)
   const heroTitleRef = ref(null)
+  const videoModalOpen = ref(false)
   const reflectionRef = ref(null)
   const isScrolled = ref(false)
   const isSpeaking = ref(false)
@@ -360,7 +420,11 @@
       story_badge: 'INTERACTIVE STORY',
       story_title: 'The Story of David fleeing from Saul',
       story_desc: 'A valuable lesson on patience, unwavering trust in God, and respecting His appointed authority even when we are in difficult and stressful times.',
-      story_action: 'Read the Full Story'
+      story_action: 'Read the Full Story',
+      story2_badge: 'ANIMATED VIDEO',
+      story2_title: 'Jesus Loves the Little Children',
+      story2_desc: 'Children run happily toward Jesus while the disciples try to stop them. But Jesus lovingly welcomes the children and lets them sit beside Him.',
+      story2_watch: 'WATCH NOW'
     },
     id: {
       home: 'BERANDA',
@@ -401,7 +465,11 @@
       story_badge: 'KISAH INTERAKTIF',
       story_title: 'Kisah Raja Daud yang di kejar Saul',
       story_desc: 'Pelajaran berharga tentang kesabaran, kepercayaan penuh kepada Tuhan, dan menghormati otoritas yang ditetapkan-Nya meskipun kita sedang berada dalam masa-masa yang sulit dan penuh tekanan.',
-      story_action: 'Baca Kisah Selengkapnya'
+      story_action: 'Baca Kisah Selengkapnya',
+      story2_badge: 'VIDEO ANIMASI',
+      story2_title: 'Yesus Mengasihi Anak-anak Kecil',
+      story2_desc: 'Anak-anak berlari dengan gembira menghampiri Yesus sementara para murid mencoba menghentikan mereka. Namun Yesus dengan penuh kasih menyambut mereka dan mempersilakan mereka duduk di sisi-Nya.',
+      story2_watch: 'TONTON SEKARANG'
     },
     zh: {
       home: '主页',
@@ -442,7 +510,11 @@
       story_badge: '互动故事',
       story_title: '大卫逃避扫罗的故事',
       story_desc: '这是关于忍耐、对上帝完全的信任，以及即使在困难和压力重重的时期也尊重祂所指定的权柄的宝贵功课。',
-      story_action: '阅读完整故事'
+      story_action: '阅读完整故事',
+      story2_badge: '动画视频',
+      story2_title: '耶稣爱小孩子',
+      story2_desc: '孩子们欢快地跑向耶稣，而门徒们却试图阻止他们。但耶稣满怀慈爱地欢迎孩子们，让他们坐在祂身旁。',
+      story2_watch: '立即观看'
     }
   }
 
@@ -720,6 +792,29 @@
     }
   }
 
+  // ─── VIDEO MODAL ─────────────────────────────────────────────────────────
+  const openVideoModal = () => {
+    videoModalOpen.value = true
+    // Pause the hero background music
+    commandYouTube('pauseVideo')
+    // Prevent body scroll while modal is open
+    document.body.style.overflow = 'hidden'
+  }
+
+  const closeVideoModal = () => {
+    videoModalOpen.value = false
+    // Resume the hero background music (only if not reading aloud)
+    if (!isSpeaking.value) {
+      commandYouTube('playVideo')
+    }
+    document.body.style.overflow = ''
+  }
+
+  const handleEscKey = (e) => {
+    if (e.key === 'Escape' && videoModalOpen.value) closeVideoModal()
+  }
+  // ─────────────────────────────────────────────────────────────────────────
+
   const animateHeroTitle = async () => {
     await nextTick()
     if (!heroTitleRef.value) return
@@ -756,13 +851,17 @@
 
   onMounted(() => {
     window.addEventListener('scroll', handleScroll)
+    window.addEventListener('keydown', handleEscKey)
     fetchVerse()
   })
 
   onUnmounted(() => {
     window.removeEventListener('scroll', handleScroll)
+    window.removeEventListener('keydown', handleEscKey)
+    // Ensure body scroll is restored if component is destroyed while modal is open
+    document.body.style.overflow = ''
     if (window.speechSynthesis) {
-      window.speechSynthesis.cancel() // Stop speaking when leaving the page
+      window.speechSynthesis.cancel()
     }
   })
 </script>
@@ -1543,14 +1642,59 @@
 
   /* PREMIUM STORY CARD */
   .story-card-container {
-    max-width: 800px;
+    max-width: 1100px;
     margin: 0 auto;
     padding: 1rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    align-items: stretch;
+  }
+
+  /* Video card — not a link, so no pointer-based hover lift */
+  .video-story-card {
+    cursor: default;
+    position: relative;
+  }
+
+  .video-story-card:hover {
+    transform: translateY(-4px) scale(1.01);
+    box-shadow: 0 20px 40px rgba(229, 43, 30, 0.10);
+  }
+
+  /* Responsive 16:9 iframe embed */
+  .video-embed-wrapper {
+    position: relative;
+    width: 100%;
+    padding-top: 56.25%; /* 16:9 ratio */
+    background: #000;
+    border-radius: 0;
+    overflow: hidden;
+  }
+
+  .video-embed-wrapper iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+
+  /* Badge variant placed relative to video card top */
+  .video-badge {
+    position: absolute;
+    top: 1.5rem;
+    left: 1.5rem;
+    z-index: 10;
+    background: #E52B1E;
+    color: #ffffff;
   }
 
   .premium-story-card {
     display: flex;
     flex-direction: column;
+    height: 100%;
     background: #ffffff;
     border-radius: 20px;
     overflow: hidden;
@@ -1636,10 +1780,14 @@
   }
 
   .premium-story-content {
+    flex: 1;
     padding: 2.5rem;
     text-align: left;
     background: #ffffff;
     position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
   }
 
   .story-title {
@@ -1696,6 +1844,128 @@
     100% {
       box-shadow: 0 0 0 0 rgba(229, 43, 30, 0);
     }
+  }
+
+  /* VIDEO THUMBNAIL CARD */
+  .video-thumbnail-wrapper {
+    position: relative;
+    width: 100%;
+    height: 350px;
+    overflow: hidden;
+    cursor: pointer;
+  }
+
+  .video-thumbnail-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    transition: transform 0.7s ease;
+  }
+
+  .video-story-card:hover .video-thumbnail-img {
+    transform: scale(1.06);
+  }
+
+  .video-thumb-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(0,0,0,0.05), rgba(0,0,0,0.55));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.3s ease;
+  }
+
+  .video-story-card:hover .video-thumb-overlay {
+    background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.7));
+  }
+
+  /* VIDEO MODAL — teleported to <body>, use :global */
+  :global(.video-modal-backdrop) {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    animation: modalFadeIn 0.25s ease;
+  }
+
+  :global(.video-modal-box) {
+    position: relative;
+    width: 100%;
+    max-width: 1000px;
+    background: #111111;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, 0.7);
+    animation: modalSlideUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.1);
+  }
+
+  :global(.video-modal-title) {
+    color: #ffffff;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+    font-size: 0.9rem;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 1rem 1.5rem;
+    margin: 0;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    opacity: 0.85;
+  }
+
+  :global(.video-modal-embed) {
+    position: relative;
+    width: 100%;
+    padding-top: 56.25%; /* 16:9 */
+    background: #000;
+  }
+
+  :global(.video-modal-embed iframe) {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+  }
+
+  :global(.video-modal-close) {
+    position: absolute;
+    top: 0.6rem;
+    right: 0.8rem;
+    z-index: 10;
+    background: rgba(255,255,255,0.12);
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.2s ease;
+  }
+
+  :global(.video-modal-close:hover) {
+    background: #E52B1E;
+    transform: rotate(90deg);
+  }
+
+  @keyframes modalFadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  @keyframes modalSlideUp {
+    from { opacity: 0; transform: translateY(30px) scale(0.97); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
   }
 
   /* RESPONSIVE */
