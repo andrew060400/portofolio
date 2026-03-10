@@ -12,6 +12,7 @@
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
     "@vueuse/core": "^14.2.1",
+    "animejs": "^4.3.6",
     "pdf-parse": "^2.4.5",
     "pinia": "^2.1.7",
     "vue": "^3.4.21",

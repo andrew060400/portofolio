@@ -71,7 +71,7 @@
 
         <div class="fc-hero-content">
           <p class="fc-hero-eyebrow">{{ currentDateFormatted }}</p>
-          <h1 class="fc-hero-title">"{{ getFirstSentence(verseData.text) }}"</h1>
+          <h1 class="fc-hero-title" ref="heroTitleRef">"{{ getFirstSentence(verseData.text) }}"</h1>
           <p class="fc-hero-subtitle">— {{ verseData.reference }}</p>
 
           <div class="fc-hero-actions">
@@ -295,7 +295,8 @@
 </template>
 
 <script setup>
-  import { ref, onMounted, onUnmounted, computed } from 'vue'
+  import { ref, onMounted, onUnmounted, computed, watch, nextTick } from 'vue'
+  import { animate, stagger, splitText } from 'animejs'
   import { GoogleGenerativeAI } from '@google/generative-ai'
   import { usePortfolioStore } from '@/store'
 
@@ -304,6 +305,7 @@
   const isLoading = ref(true)
   const error = ref(false)
   const verseData = ref(null)
+  const heroTitleRef = ref(null)
   const reflectionRef = ref(null)
   const isScrolled = ref(false)
   const isSpeaking = ref(false)
@@ -718,6 +720,40 @@
     }
   }
 
+  const animateHeroTitle = async () => {
+    await nextTick()
+    if (!heroTitleRef.value) return
+
+    // Reset any existing inline styles from previous animation
+    heroTitleRef.value.innerHTML = heroTitleRef.value.textContent
+
+    const { words } = splitText(heroTitleRef.value, { words: true, chars: false })
+
+    // Prevent mid-word line breaks on each word span
+    words.forEach(w => { w.style.whiteSpace = 'nowrap' })
+
+    animate(words, {
+      // Animate per-word from below with a cinematic bounce
+      y: [
+        { to: '2rem', duration: 0 },
+        { to: '-0.3rem', ease: 'outExpo', duration: 600 },
+        { to: 0, ease: 'outBounce', duration: 500, delay: 50 }
+      ],
+      opacity: [
+        { to: 0, duration: 0 },
+        { to: 1, ease: 'outQuad', duration: 350 }
+      ],
+      delay: stagger(80, { start: 150 }),
+    })
+  }
+
+  // Watch for verseData to become available in order to trigger the animation
+  watch(verseData, (newVal) => {
+    if (newVal) {
+      animateHeroTitle()
+    }
+  })
+
   onMounted(() => {
     window.addEventListener('scroll', handleScroll)
     fetchVerse()
@@ -1062,6 +1098,13 @@
     margin: 0 0 1.5rem 0;
     letter-spacing: -2px;
     text-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+    overflow: visible;
+  }
+
+  /* Word spans created by anime.js splitText – must be inline-block for transform to work */
+  .fc-hero-title .animejs-word {
+    display: inline-block;
+    white-space: nowrap;
   }
 
   .fc-hero-subtitle {
