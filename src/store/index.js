@@ -65,6 +65,14 @@ export const usePortfolioStore = defineStore('portfolio', {
                 description: 'A serene and beautifully crafted app delivering personalized daily Bible verses and reflections powered by Gemini AI, designed to inspire and uplift.',
                 image: 'https://images.unsplash.com/photo-1507692049790-de58290a4334?q=80&w=1470&auto=format&fit=crop',
                 link: '/daily-verse'
+            },
+            {
+                id: 4,
+                title: 'Animation Bible — Perjalanan Kristus',
+                subtitle: 'Scroll-Driven Three.js 3D Interactive Experience',
+                description: 'An immersive 3D scroll-driven experience built with Three.js, narrating Christ\'s redemptive journey across 12 biblical chapters — from the Garden of Eden to the Resurrection. Features camera spline navigation, stained-glass illustrated billboards, particle systems, and dynamic atmospheric lighting.',
+                image: '/bible-scenes/crucifixion.png',
+                link: '/animation-bible'
             }
         ],
         contact: {

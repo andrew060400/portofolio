@@ -31,6 +31,11 @@ const router = createRouter({
             path: '/daily-verse',
             name: 'daily-verse',
             component: () => import('../views/DailyVerseView.vue')
+        },
+        {
+            path: '/animation-bible',
+            name: 'animation-bible',
+            component: () => import('../views/AnimationBibleView.vue')
         }
     ]
 })
