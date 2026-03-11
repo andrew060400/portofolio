@@ -281,7 +281,7 @@
             </a>
 
             <!-- Card 2: Jesus and the Children — click to open modal -->
-            <div class="premium-story-card video-story-card" @click="openVideoModal">
+            <div class="premium-story-card video-story-card" @click="openVideoModal('tYETL2_b1Y0', t.story2_title)">
               <div class="video-thumbnail-wrapper">
                 <!-- YouTube thumbnail image -->
                 <img
@@ -308,11 +308,38 @@
                 </div>
               </div>
             </div>
+
+            <!-- Card 3: Zacchaeus — click to open modal -->
+            <div class="premium-story-card video-story-card" @click="openVideoModal('rAhKXF3z9FU', t.story3_title)">
+              <div class="video-thumbnail-wrapper">
+                <img
+                  src="https://img.youtube.com/vi/rAhKXF3z9FU/maxresdefault.jpg"
+                  alt="Zacchaeus thumbnail"
+                  class="video-thumbnail-img"
+                />
+                <div class="video-thumb-overlay">
+                  <div class="play-icon-pulse">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M8 5V19L19 12L8 5Z" />
+                    </svg>
+                  </div>
+                </div>
+                <div class="story-badge video-badge">{{ t.story3_badge }}</div>
+              </div>
+              <div class="premium-story-content">
+                <h3 class="story-title">{{ t.story3_title }}</h3>
+                <p class="story-desc">{{ t.story3_desc }}</p>
+                <div class="story-footer">
+                  <span class="story-action">{{ t.story3_watch }}</span>
+                  <span class="story-arrow">&#9654;</span>
+                </div>
+              </div>
+            </div>
           </div>
 
           <!-- VIDEO MODAL OVERLAY -->
           <Teleport to="body">
-            <div v-if="videoModalOpen" class="video-modal-backdrop" @click.self="closeVideoModal">
+            <div v-if="activeVideo" class="video-modal-backdrop" @click.self="closeVideoModal">
               <div class="video-modal-box">
                 <!-- Close button -->
                 <button class="video-modal-close" @click="closeVideoModal" aria-label="Close">
@@ -322,13 +349,13 @@
                   </svg>
                 </button>
                 <!-- Title bar -->
-                <p class="video-modal-title">{{ t.story2_title }}</p>
+                <p class="video-modal-title">{{ activeVideo.title }}</p>
                 <!-- 16:9 iframe -->
                 <div class="video-modal-embed">
                   <iframe
-                    v-if="videoModalOpen"
-                    src="https://www.youtube.com/embed/tYETL2_b1Y0?autoplay=1&rel=0&modestbranding=1"
-                    title="Jesus Loves the Little Children | Kids Bible Story Animation"
+                    v-if="activeVideo"
+                    :src="`https://www.youtube.com/embed/${activeVideo.id}?autoplay=1&rel=0&modestbranding=1`"
+                    :title="activeVideo.title"
                     frameborder="0"
                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
                     referrerpolicy="strict-origin-when-cross-origin"
@@ -365,7 +392,7 @@
   const error = ref(false)
   const verseData = ref(null)
   const heroTitleRef = ref(null)
-  const videoModalOpen = ref(false)
+  const activeVideo = ref(null) // holds { id, title } when modal is open
   const reflectionRef = ref(null)
   const isScrolled = ref(false)
   const isSpeaking = ref(false)
@@ -424,7 +451,11 @@
       story2_badge: 'ANIMATED VIDEO',
       story2_title: 'Jesus Loves the Little Children',
       story2_desc: 'Children run happily toward Jesus while the disciples try to stop them. But Jesus lovingly welcomes the children and lets them sit beside Him.',
-      story2_watch: 'WATCH NOW'
+      story2_watch: 'WATCH NOW',
+      story3_badge: 'ANIMATED VIDEO',
+      story3_title: 'Zacchaeus Meets Jesus',
+      story3_desc: 'Zacchaeus climbs a tree to see Jesus, but Jesus surprises him by calling him down and visiting his home.\n\nThis story teaches children about kindness, forgiveness, and how Jesus loves everyone.\n\n📖 Bible Reference: Luke 19:1–10',
+      story3_watch: 'WATCH NOW'
     },
     id: {
       home: 'BERANDA',
@@ -469,7 +500,11 @@
       story2_badge: 'VIDEO ANIMASI',
       story2_title: 'Yesus Mengasihi Anak-anak Kecil',
       story2_desc: 'Anak-anak berlari dengan gembira menghampiri Yesus sementara para murid mencoba menghentikan mereka. Namun Yesus dengan penuh kasih menyambut mereka dan mempersilakan mereka duduk di sisi-Nya.',
-      story2_watch: 'TONTON SEKARANG'
+      story2_watch: 'TONTON SEKARANG',
+      story3_badge: 'VIDEO ANIMASI',
+      story3_title: 'Zakheus Bertemu Yesus',
+      story3_desc: 'Zakheus memanjat pohon untuk melihat Yesus, namun Yesus mengejutkannya dengan memanggilnya turun dan mengunjungi rumahnya.\n\nKisah ini mengajarkan anak-anak tentang kebaikan hati, pengampunan, dan bagaimana Yesus mengasihi semua orang.\n\n📖 Referensi: Lukas 19:1–10',
+      story3_watch: 'TONTON SEKARANG'
     },
     zh: {
       home: '主页',
@@ -514,7 +549,11 @@
       story2_badge: '动画视频',
       story2_title: '耶稣爱小孩子',
       story2_desc: '孩子们欢快地跑向耶稣，而门徒们却试图阻止他们。但耶稣满怀慈爱地欢迎孩子们，让他们坐在祂身旁。',
-      story2_watch: '立即观看'
+      story2_watch: '立即观看',
+      story3_badge: '动画视频',
+      story3_title: '撒该遇见耶稣',
+      story3_desc: '撒该爬上树为了看耶稣，但耶稣出人意料地叫他下来，并造访了他的家。\n\n这个故事教导孩子们关于仁慈、宽恕，以及耶稣爱每一个人。\n\n📖 圣经出处：路加福音 19:1–10',
+      story3_watch: '立即观看'
     }
   }
 
@@ -793,8 +832,8 @@
   }
 
   // ─── VIDEO MODAL ─────────────────────────────────────────────────────────
-  const openVideoModal = () => {
-    videoModalOpen.value = true
+  const openVideoModal = (videoId, videoTitle) => {
+    activeVideo.value = { id: videoId, title: videoTitle }
     // Pause the hero background music
     commandYouTube('pauseVideo')
     // Prevent body scroll while modal is open
@@ -802,7 +841,7 @@
   }
 
   const closeVideoModal = () => {
-    videoModalOpen.value = false
+    activeVideo.value = null
     // Resume the hero background music (only if not reading aloud)
     if (!isSpeaking.value) {
       commandYouTube('playVideo')
@@ -811,7 +850,7 @@
   }
 
   const handleEscKey = (e) => {
-    if (e.key === 'Escape' && videoModalOpen.value) closeVideoModal()
+    if (e.key === 'Escape' && activeVideo.value) closeVideoModal()
   }
   // ─────────────────────────────────────────────────────────────────────────
 
