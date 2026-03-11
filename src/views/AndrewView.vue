@@ -7,6 +7,7 @@ const activeSide = ref(null) // 'left' or 'right'
 
 // Modal State
 const activeProject = ref(null)
+const isMobileMenuOpen = ref(false)
 
 const openModal = (project) => {
   if (project.link) {
@@ -22,6 +23,20 @@ const closeModal = () => {
   activeProject.value = null
   document.body.style.overflow = 'auto'
 }
+
+const toggleMobileMenu = () => {
+  isMobileMenuOpen.value = !isMobileMenuOpen.value
+  if (isMobileMenuOpen.value) {
+    document.body.style.overflow = 'hidden'
+  } else {
+    document.body.style.overflow = 'auto'
+  }
+}
+
+const closeMobileMenu = () => {
+  isMobileMenuOpen.value = false
+  document.body.style.overflow = 'auto'
+}
 </script>
 
 <template>
@@ -31,13 +46,34 @@ const closeModal = () => {
         <img src="/logo.jpeg" alt="Logo" class="nav-logo-img" />
         <div class="logo">Andrew Irawan.</div>
       </div>
-      <div class="links">
+      
+      <!-- Desktop Links -->
+      <div class="links desktop-links">
         <a href="#hero">About</a>
         <a href="#experience">Experience</a>
         <a href="#projects">Projects</a>
         <router-link to="/ats-resume-checker" class="nav-highlight">ATS Scanner</router-link>
       </div>
+
+      <!-- Hamburger Menu for Mobile -->
+      <button class="hamburger-btn" @click="toggleMobileMenu" aria-label="Toggle menu">
+        <div class="hamburger-line" :class="{ 'line-top-active': isMobileMenuOpen }"></div>
+        <div class="hamburger-line" :class="{ 'line-middle-active': isMobileMenuOpen }"></div>
+        <div class="hamburger-line" :class="{ 'line-bottom-active': isMobileMenuOpen }"></div>
+      </button>
     </div>
+
+    <!-- Mobile Menu Overlay -->
+    <transition name="menu-slide">
+      <div v-if="isMobileMenuOpen" class="mobile-menu-overlay">
+        <div class="mobile-links">
+          <a href="#hero" @click="closeMobileMenu">About</a>
+          <a href="#experience" @click="closeMobileMenu">Experience</a>
+          <a href="#projects" @click="closeMobileMenu">Projects</a>
+          <router-link to="/ats-resume-checker" class="nav-highlight" @click="closeMobileMenu">ATS Scanner</router-link>
+        </div>
+      </div>
+    </transition>
   </nav>
   <div class="adham-layout">
     
@@ -210,6 +246,10 @@ const closeModal = () => {
   letter-spacing: -1px;
 }
 
+.links.desktop-links {
+  display: flex;
+}
+
 .links a, .links .nav-highlight {
   margin-left: 2.5rem;
   color: #aaaaaa;
@@ -227,6 +267,32 @@ const closeModal = () => {
 
 .links .nav-highlight {
   color: #a5b4fc; /* subtle indigo hint for the special tool */
+}
+
+/* Mobile Menu & Hamburger Base (Hidden on Desktop) */
+.hamburger-btn {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  z-index: 1001; /* Above overlay */
+  flex-direction: column;
+  justify-content: space-around;
+  width: 40px;
+  height: 40px;
+}
+
+.hamburger-line {
+  width: 100%;
+  height: 2px;
+  background-color: #ffffff;
+  transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+  transform-origin: center;
+}
+
+.mobile-menu-overlay {
+  display: none;
 }
 
 
@@ -447,6 +513,9 @@ const closeModal = () => {
   color: #fff;
   transform: translateY(30px); /* Start lower */
   transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1);
+  padding: 2rem;
+  box-sizing: border-box;
+  width: 100%;
 }
 
 .project-card:hover .overlay-content {
@@ -628,22 +697,17 @@ const closeModal = () => {
 }
 
 @media (max-width: 900px) {
-  /* Scrollable Swipe Navigation for Mobile */
   .sticky-nav { 
     padding: 0; 
     height: 75px; 
-    overflow-x: auto; 
-    -webkit-overflow-scrolling: touch;
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
-  }
-  .sticky-nav::-webkit-scrollbar {
-    display: none; /* Chrome/Safari */
+    border-bottom: 1px solid rgba(255,255,255,0.05); /* Subtle border */
   }
 
   .nav-container { 
     padding: 0 1.5rem; 
-    min-width: 550px; /* Memaksa elemen tetap lebar agar bisa di-scroll horizontal */
+    justify-content: space-between;
+    width: 100%;
+    box-sizing: border-box;
   }
   
   .logo-wrapper { 
@@ -651,20 +715,109 @@ const closeModal = () => {
   }
   .logo { 
     font-size: 1.2rem; 
-    white-space: nowrap; /* Mencegah nama turun ke baris baru */
   }
   .nav-logo-img { 
     width: 42px; 
     height: 42px; 
   }
-  .links {
-    display: flex;
-    gap: 1.5rem;
-    white-space: nowrap;
+  
+  /* Hide Desktop Links */
+  .links.desktop-links {
+    display: none;
   }
-  .links a { 
-    margin-left: 0; 
-    font-size: 0.95rem; 
+
+  /* Show Hamburger */
+  .hamburger-btn {
+    display: flex;
+    margin-right: -0.25rem; /* Allow it to sit without overflowing or pushing right of screen */
+  }
+
+  /* Hamburger Animations */
+  .line-top-active {
+    transform: translateY(9px) rotate(45deg);
+  }
+  .line-middle-active {
+    opacity: 0;
+  }
+  .line-bottom-active {
+    transform: translateY(-9px) rotate(-45deg);
+  }
+
+  /* Mobile Full Screen Menu */
+  .mobile-menu-overlay {
+    display: flex;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(17, 17, 17, 0.98);
+    backdrop-filter: blur(15px);
+    z-index: 1000;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .mobile-links {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2.5rem;
+  }
+
+  .mobile-links a {
+    color: #ffffff;
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-decoration: none;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    opacity: 0.8;
+    transition: opacity 0.3s, transform 0.3s;
+  }
+
+  .mobile-links a:hover, .mobile-links .nav-highlight {
+    opacity: 1;
+    transform: translateY(-2px);
+  }
+  
+  .mobile-links .nav-highlight {
+    color: #a5b4fc;
+  }
+
+  /* Mobile Menu Transitions */
+  .menu-slide-enter-active,
+  .menu-slide-leave-active {
+    transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+  }
+  .menu-slide-enter-from,
+  .menu-slide-leave-to {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+
+  /* Extra adjustments for very small screens (e.g. 360px - 400px) */
+  @media (max-width: 400px) {
+    .nav-container {
+      padding: 0 1rem;
+    }
+    .logo {
+      font-size: 1rem;
+    }
+    .logo-wrapper {
+      gap: 0.5rem;
+    }
+    .nav-logo-img {
+      width: 36px;
+      height: 36px;
+    }
+    .mobile-links {
+      gap: 2rem;
+    }
+    .mobile-links a {
+      font-size: 1.25rem;
+    }
   }
 
   /* Premium Split Hero for Mobile (Restored Minimalist Gap Layout) */
@@ -727,6 +880,19 @@ const closeModal = () => {
     grid-template-columns: 1fr;
     padding: 0;
     gap: 2rem;
+  }
+  .project-card {
+    aspect-ratio: 1 / 1;
+  }
+  .overlay-content {
+    padding: 1.5rem;
+  }
+  .overlay-content h3 {
+    font-size: 1.5rem;
+  }
+  .overlay-content p {
+    font-size: 0.9rem;
+    margin-bottom: 1.5rem;
   }
   
   /* Mobile Modal */
