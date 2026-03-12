@@ -335,6 +335,33 @@
                 </div>
               </div>
             </div>
+
+            <!-- Card 4: Jesus Calms the Storm — click to open modal -->
+            <div class="premium-story-card video-story-card" @click="openVideoModal('TSDCFAh1jwE', t.story4_title)">
+              <div class="video-thumbnail-wrapper">
+                <img
+                  src="https://img.youtube.com/vi/TSDCFAh1jwE/maxresdefault.jpg"
+                  alt="Jesus Calms the Storm thumbnail"
+                  class="video-thumbnail-img"
+                />
+                <div class="video-thumb-overlay">
+                  <div class="play-icon-pulse">
+                    <svg width="28" height="28" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M8 5V19L19 12L8 5Z" />
+                    </svg>
+                  </div>
+                </div>
+                <div class="story-badge video-badge">{{ t.story4_badge }}</div>
+              </div>
+              <div class="premium-story-content">
+                <h3 class="story-title">{{ t.story4_title }}</h3>
+                <p class="story-desc">{{ t.story4_desc }}</p>
+                <div class="story-footer">
+                  <span class="story-action">{{ t.story4_watch }}</span>
+                  <span class="story-arrow">&#9654;</span>
+                </div>
+              </div>
+            </div>
           </div>
 
           <!-- VIDEO MODAL OVERLAY -->
@@ -467,7 +494,11 @@
       story3_badge: 'ANIMATED VIDEO',
       story3_title: 'Zacchaeus Meets Jesus',
       story3_desc: 'Zacchaeus climbs a tree to see Jesus, but Jesus surprises him by calling him down and visiting his home.\n\nThis story teaches children about kindness, forgiveness, and how Jesus loves everyone.\n\n📖 Bible Reference: Luke 19:1–10',
-      story3_watch: 'WATCH NOW'
+      story3_watch: 'WATCH NOW',
+      story4_badge: 'ANIMATED VIDEO',
+      story4_title: 'Jesus Calms the Storm',
+      story4_desc: 'Jesus and His disciples are sailing on a boat when a powerful storm suddenly appears. The disciples become afraid as the wind blows and the waves crash.\n\nBut Jesus calmly commands the wind and the sea to be still. This wonderful story teaches children about faith, trust, and the power of Jesus even in difficult times.\n\n📖 Bible Reference: Mark 4:35–41',
+      story4_watch: 'WATCH NOW'
     },
     id: {
       home: 'BERANDA',
@@ -516,7 +547,11 @@
       story3_badge: 'VIDEO ANIMASI',
       story3_title: 'Zakheus Bertemu Yesus',
       story3_desc: 'Zakheus memanjat pohon untuk melihat Yesus, namun Yesus mengejutkannya dengan memanggilnya turun dan mengunjungi rumahnya.\n\nKisah ini mengajarkan anak-anak tentang kebaikan hati, pengampunan, dan bagaimana Yesus mengasihi semua orang.\n\n📖 Referensi: Lukas 19:1–10',
-      story3_watch: 'TONTON SEKARANG'
+      story3_watch: 'TONTON SEKARANG',
+      story4_badge: 'VIDEO ANIMASI',
+      story4_title: 'Yesus Meredakan Badai',
+      story4_desc: 'Yesus dan murid-murid-Nya sedang berlayar di sebuah perahu ketika badai dahsyat tiba-tiba muncul. Murid-murid menjadi takut saat angin bertiup kencang dan ombak menghantam perahu.\n\nNamun Yesus dengan tenang memerintahkan angin dan laut untuk menjadi tenang. Kisah luar biasa ini mengajarkan anak-anak tentang iman, rasa percaya, dan kuasa Yesus bahkan di masa-masa sulit.\n\n📖 Referensi: Markus 4:35–41',
+      story4_watch: 'TONTON SEKARANG'
     },
     zh: {
       home: '主页',
@@ -565,7 +600,11 @@
       story3_badge: '动画视频',
       story3_title: '撒该遇见耶稣',
       story3_desc: '撒该爬上树为了看耶稣，但耶稣出人意料地叫他下来，并造访了他的家。\n\n这个故事教导孩子们关于仁慈、宽恕，以及耶稣爱每一个人。\n\n📖 圣经出处：路加福音 19:1–10',
-      story3_watch: '立即观看'
+      story3_watch: '立即观看',
+      story4_badge: '动画视频',
+      story4_title: '耶稣平息风暴',
+      story4_desc: '耶稣和门徒们乘船航行时，狂风大浪突然袭来。门徒们因狂风巨浪而惊惶失措。\n\n但耶稣平静地斥责风和海，让它们平静下来。这个奇妙的故事教导孩子们在困难时刻对耶稣的信心、信靠和耶稣的大能。\n\n📖 圣经出处：马可福音 4:35–41',
+      story4_watch: '立即观看'
     }
   }
 
