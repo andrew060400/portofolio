@@ -1,6 +1,18 @@
 <script setup>
 import { ref, onMounted, nextTick } from 'vue';
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import { useHead } from '@unhead/vue'
+
+// SEO Meta Tags
+useHead({
+  title: 'Alibaba Clone | B2B E-commerce Marketplace',
+  meta: [
+    {
+      name: 'description',
+      content: 'Explore KokiGembul.com, a B2B E-commerce Clone featuring an AI Sourcing Agent powered by Google Gemini, designed by Andrew Irawan.'
+    }
+  ]
+})
 
 // Gemini Initialization
 const apiKey = import.meta.env.VITE_GEMINI_API_KEY;

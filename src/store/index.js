@@ -80,7 +80,7 @@ export const usePortfolioStore = defineStore('portfolio', {
             phone: '0877-6507-1995',
             email: 'andrew060400@gmail.com'
         },
-        dailyVerses: JSON.parse(localStorage.getItem('dailyVerses') || '{}')
+        dailyVerses: typeof window !== 'undefined' ? JSON.parse(localStorage.getItem('dailyVerses') || '{}') : {}
     }),
     actions: {
         setDailyVerse(lang, dateString, verseData) {
@@ -88,11 +88,15 @@ export const usePortfolioStore = defineStore('portfolio', {
                 date: dateString,
                 data: verseData
             }
-            localStorage.setItem('dailyVerses', JSON.stringify(this.dailyVerses))
+            if (typeof window !== 'undefined') {
+                localStorage.setItem('dailyVerses', JSON.stringify(this.dailyVerses))
+            }
         },
         clearAllVerses() {
             this.dailyVerses = {}
-            localStorage.removeItem('dailyVerses')
+            if (typeof window !== 'undefined') {
+                localStorage.removeItem('dailyVerses')
+            }
         }
     }
 })

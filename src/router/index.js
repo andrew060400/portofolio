@@ -1,7 +1,11 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createRouter, createWebHistory, createMemoryHistory } from 'vue-router'
+
+// Use createMemoryHistory during SSR/SSG, and createWebHistory for the browser.
+const historyMode = typeof window === 'undefined' ? createMemoryHistory(import.meta.env.BASE_URL) : createWebHistory(import.meta.env.BASE_URL)
+
 // Controller: Routers point paths to correct Views
 const router = createRouter({
-    history: createWebHistory(import.meta.env.BASE_URL),
+    history: historyMode,
     routes: [
         {
             path: '/',

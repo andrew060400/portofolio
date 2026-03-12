@@ -1,3 +1,17 @@
+<script setup>
+import { useHead } from '@unhead/vue'
+
+useHead({
+  title: 'About | Andrew Portfolio',
+  meta: [
+    {
+      name: 'description',
+      content: 'Learn more about Andrew Irawan and this portfolio project built with Vue.js.'
+    }
+  ]
+})
+</script>
+
 <template>
   <div class="about">
     <h1>About Me</h1>

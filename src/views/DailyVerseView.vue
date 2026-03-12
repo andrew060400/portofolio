@@ -385,6 +385,18 @@
   import { animate, stagger, splitText } from 'animejs'
   import { GoogleGenerativeAI } from '@google/generative-ai'
   import { usePortfolioStore } from '@/store'
+  import { useHead } from '@unhead/vue'
+
+  // SEO Meta Tags
+  useHead({
+    title: 'Daily Manna | Daily Bible Verse & Devotional',
+    meta: [
+      {
+        name: 'description',
+        content: 'Your daily source of spiritual guidance. Interactive Bible verses, multi-language devotionals, and an empathetic AI Prayer Corner.'
+      }
+    ]
+  })
 
   const store = usePortfolioStore()
 
@@ -397,7 +409,7 @@
   const isScrolled = ref(false)
   const isSpeaking = ref(false)
   const showLangMenu = ref(false)
-  const currentLang = ref(localStorage.getItem('fc_lang') || 'en')
+  const currentLang = ref(typeof window !== 'undefined' ? (localStorage.getItem('fc_lang') || 'en') : 'en')
 
   // Chat / Prayer Corner State
   const prayerInput = ref('')
@@ -586,7 +598,9 @@
   }
 
   const changeLanguage = () => {
-    localStorage.setItem('fc_lang', currentLang.value)
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('fc_lang', currentLang.value)
+    }
     // If speaking, stop it
     if (isSpeaking.value) {
       window.speechSynthesis.cancel()

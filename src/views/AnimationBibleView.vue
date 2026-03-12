@@ -50,9 +50,22 @@
 <script>
 import { nextTick } from 'vue'
 import * as THREE from 'three'
+import { useHead } from '@unhead/vue'
 
 export default {
   name: 'AnimationBibleView',
+
+  setup() {
+    useHead({
+      title: 'Animation Bible | 3D Journey of Christ',
+      meta: [
+        {
+          name: 'description',
+          content: 'Experience the biblical journey from the Garden of Eden to the Resurrection through an interactive, scroll-driven 3D animation.'
+        }
+      ]
+    })
+  },
 
   data() {
     return {

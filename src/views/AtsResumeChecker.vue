@@ -142,6 +142,18 @@
 <script setup>
 import { ref, onMounted, computed, nextTick } from 'vue'
 import { GoogleGenerativeAI } from '@google/generative-ai'
+import { useHead } from '@unhead/vue'
+
+// SEO Meta Tags
+useHead({
+  title: 'ATS Resume Scanner AI | Optimize your CV',
+  meta: [
+    {
+      name: 'description',
+      content: 'Free AI-powered Applicant Tracking System (ATS) resume scanner. Upload your CV, compare against job descriptions, and chat with an AI Career Coach.'
+    }
+  ]
+})
 
 const mounted = ref(false)
 

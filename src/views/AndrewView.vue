@@ -1,9 +1,21 @@
 <script setup>
 import { ref } from 'vue'
 import { usePortfolioStore } from '../store'
+import { useHead } from '@unhead/vue'
 
 const store = usePortfolioStore()
 const activeSide = ref(null) // 'left' or 'right'
+
+// SEO Meta Tags
+useHead({
+  title: 'Andrew Irawan | Project Manager & Frontend Developer',
+  meta: [
+    {
+      name: 'description',
+      content: 'Portfolio of Andrew Irawan, detailing experience as a Project Manager and Frontend Developer specialized in Vue.js and Next.js.'
+    }
+  ]
+})
 
 // Modal State
 const activeProject = ref(null)
